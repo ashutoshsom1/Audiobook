@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiobook Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Audiobook Creator</h1>
+            <nav>
+                <ul>
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/library">Library</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Create and Play Audiobooks</h2>
+            <p>Upload audio files or convert text to speech to create your own audiobooks.</p>
+        </section>
+
+        <div class="card-container">
+            <section class="card upload-section">
+                <h3>Upload Audio</h3>
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file-upload" class="custom-file-upload">
+                            <i class="fa fa-cloud-upload"></i> Choose File
+                        </label>
+                        <input id="file-upload" type="file" name="file" accept=".mp3,.wav,.ogg">
+                        <span id="file-name">No file chosen</span>
+                    </div>
+                    <button type="submit" class="btn primary-btn">Upload</button>
+                </form>
+                <div id="upload-progress" class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div id="upload-message"></div>
+            </section>
+
+            <section class="card tts-section">
+                <h3>Text to Speech</h3>
+                <form id="tts-form">
+                    <div class="form-group">
+                        <label for="tts-text">Enter Text:</label>
+                        <textarea id="tts-text" name="text" rows="6" placeholder="Type or paste text to convert to speech..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tts-language">Language:</label>
+                        <select id="tts-language" name="language">
+                            <option value="en">English</option>
+                            <option value="fr">French</option>
+                            <option value="es">Spanish</option>
+                            <option value="de">German</option>
+                            <option value="it">Italian</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="zh-CN">Chinese (Simplified)</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn primary-btn">Generate Speech</button>
+                </form>
+                <div id="tts-progress" class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div id="tts-message"></div>
+            </section>
+
+            <section class="card player-section">
+                <h3>Audio Player</h3>
+                <div id="audio-player">
+                    <div id="player-container">
+                        <audio id="audio-element" controls></audio>
+                    </div>
+                    <div id="player-controls">
+                        <div class="player-info">
+                            <div id="current-title">No audio selected</div>
+                            <div id="time-display">
+                                <span id="current-time">0:00</span> / 
+                                <span id="duration">0:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="recent-files">
+                    <h4>Recent Files</h4>
+                    <ul id="recent-files-list"></ul>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Audiobook Creator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
