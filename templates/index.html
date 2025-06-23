@@ -23,7 +23,7 @@
     <main class="container">
         <section class="hero">
             <h2>Create and Play Audiobooks</h2>
-            <p>Upload audio files or convert text to speech to create your own audiobooks.</p>
+            <p>Upload audio files, convert text to speech, or create audiobooks from PDFs.</p>
         </section>
 
         <div class="card-container">
@@ -94,6 +94,42 @@
                     <h4>Recent Files</h4>
                     <ul id="recent-files-list"></ul>
                 </div>
+            </section>
+
+            <section class="card pdf-section">
+                <h3>PDF to Audiobook</h3>
+                <form id="pdf-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="pdf-upload" class="custom-file-upload">
+                            <i class="fa fa-file-pdf-o"></i> Choose PDF
+                        </label>
+                        <input id="pdf-upload" type="file" name="file" accept=".pdf">
+                        <span id="pdf-name">No file chosen</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdf-title">Audiobook Title:</label>
+                        <input type="text" id="pdf-title" name="title" placeholder="Enter a title for the audiobook">
+                    </div>
+                    <div class="form-group">
+                        <label for="pdf-language">Language:</label>
+                        <select id="pdf-language" name="language">
+                            <option value="en">English</option>
+                            <option value="fr">French</option>
+                            <option value="es">Spanish</option>
+                            <option value="de">German</option>
+                            <option value="it">Italian</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="zh-CN">Chinese (Simplified)</option>
+                            <option value="hi">Hindi</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn primary-btn">Create Audiobook</button>
+                </form>
+                <div id="pdf-progress" class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <div id="pdf-message"></div>
             </section>
         </div>
     </main>

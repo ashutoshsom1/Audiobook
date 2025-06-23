@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const ttsProgress = document.getElementById('tts-progress');
     const ttsMessage = document.getElementById('tts-message');
     
+    const pdfForm = document.getElementById('pdf-form');
+    const pdfUpload = document.getElementById('pdf-upload');
+    const pdfName = document.getElementById('pdf-name');
+    const pdfProgress = document.getElementById('pdf-progress');
+    const pdfMessage = document.getElementById('pdf-message');
+    
     const audioElement = document.getElementById('audio-element');
     const currentTitle = document.getElementById('current-title');
     const currentTime = document.getElementById('current-time');
@@ -127,6 +133,78 @@ document.addEventListener('DOMContentLoaded', function() {
         // Simulate progress for better UX
         simulateProgress(ttsProgress);
     });
+    
+    // Update PDF name display when a file is selected
+    if (pdfUpload) {
+        pdfUpload.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                pdfName.textContent = this.files[0].name;
+                
+                // Auto-fill the title field with the PDF filename (without extension)
+                const pdfTitle = document.getElementById('pdf-title');
+                if (pdfTitle && !pdfTitle.value) {
+                    const filename = this.files[0].name;
+                    pdfTitle.value = filename.substring(0, filename.lastIndexOf('.')) || filename;
+                }
+            } else {
+                pdfName.textContent = 'No file chosen';
+            }
+        });
+    }
+    
+    // Handle PDF to audiobook conversion
+    if (pdfForm) {
+        pdfForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const file = pdfUpload.files[0];
+            
+            if (!file) {
+                showMessage(pdfMessage, 'Please select a PDF file', false);
+                return;
+            }
+            
+            if (file.type !== 'application/pdf') {
+                showMessage(pdfMessage, 'Please select a valid PDF file', false);
+                return;
+            }
+            
+            // Show progress bar
+            pdfProgress.style.display = 'block';
+            
+            // Upload and process PDF using fetch
+            fetch('/process-pdf', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(pdfMessage, 'Audiobook created successfully!', true);
+                    // Add to recent files with custom title if provided
+                    addToRecentFiles({
+                        name: data.title || data.filename,
+                        path: `/get-audio/${data.filename}`
+                    });
+                    // Load the file in the player
+                    loadAudio(data.title || data.filename, `/get-audio/${data.filename}`);
+                } else {
+                    showMessage(pdfMessage, data.error || 'Processing failed', false);
+                }
+                // Reset progress bar
+                resetProgressBar(pdfProgress);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage(pdfMessage, 'An error occurred during processing', false);
+                resetProgressBar(pdfProgress);
+            });
+            
+            // Simulate progress for better UX
+            simulateProgress(pdfProgress);
+        });
+    }
     
     // Audio player time update
     audioElement.addEventListener('timeupdate', function() {
