@@ -6,6 +6,11 @@ from pydub import AudioSegment
 import uuid
 import json
 import PyPDF2
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = 'audiobook_secret_key'
@@ -121,18 +126,23 @@ def process_pdf():
             audio_filename = f"pdf_{uuid.uuid4()}.mp3"
             audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
             
-            # Convert text to speech
-            tts = gtts.gTTS(text=text, lang=language)
-            tts.save(audio_path)
-            
-            return jsonify({
-                'success': True, 
-                'filename': audio_filename,
-                'title': audiobook_title,
-                'text': text[:1000] + '...' if len(text) > 1000 else text  # Return preview of text
-            })
+            try:
+                # Convert text to speech
+                tts = gtts.gTTS(text=text, lang=language)
+                tts.save(audio_path)
+                
+                return jsonify({
+                    'success': True, 
+                    'filename': audio_filename,
+                    'title': audiobook_title,
+                    'text': text[:1000] + '...' if len(text) > 1000 else text  # Return preview of text
+                })
+            except Exception as e:
+                logger.error(f"Error generating speech: {str(e)}")
+                return jsonify({'success': False, 'error': f'Error generating speech: {str(e)}'})
             
         except Exception as e:
+            logger.error(f"Error processing PDF: {str(e)}")
             return jsonify({'success': False, 'error': str(e)})
     else:
         return jsonify({'success': False, 'error': 'File must be a PDF'})
@@ -152,4 +162,4 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=True, reloader_type='stat')
